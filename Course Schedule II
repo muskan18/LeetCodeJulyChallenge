@@ -1,0 +1,41 @@
+/*
+There are a total of n courses you have to take, labeled from 0 to n-1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, return the ordering of courses you should take to finish all courses.
+
+There may be multiple correct orders, you just need to return one of them. If it is impossible to finish all courses, return an empty array.
+
+*/
+
+class Solution {
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        
+  vector<bool> discovered(numCourses, false), finished(numCourses, false);
+        vector<int> ans;
+        vector<vector<int>> graph(numCourses);
+        for (auto& pair : prerequisites) {
+            graph[pair[0]].push_back(pair[1]);
+        }
+        for (int i = 0; i < numCourses; i++) {
+            if (!dfs(graph, i, discovered, finished, ans)) return vector<int>();
+        }
+        return ans;
+    }
+    
+    bool dfs(vector<vector<int>>& graph, int cur, vector<bool>& discovered, vector<bool>& finished, vector<int>& ans) {
+        if (finished[cur]) return true;
+        if (discovered[cur]) return false;
+        discovered[cur] = true;
+        for (int neighbor : graph[cur]) {
+            if (!dfs(graph, neighbor, discovered, finished, ans)) return false;
+        }
+        finished[cur] = true;
+        ans.push_back(cur);
+        return true;
+    }
+};
+
+
